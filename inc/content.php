@@ -77,7 +77,8 @@ function normalize_properties($properties) {
         # single element.  Our Hugo templates require this.
         if ($k == 'photo') {
             $props[$k] = $v;
-        } elseif (is_array($v) && count($v) === 1) {
+        } elseif (is_array($v) && count($v) === 1 && (!is_array($v[0]))) {
+	    # flatten properties *unless* they contain nested objects.
             $props[$k] = $v[0];
         } else {
             $props[$k] = $v;
@@ -120,6 +121,8 @@ function post_type_discovery($properties) {
                  'repost-of',
                  'like-of',
                  'bookmark-of',
+		 'ate',
+		 'drank',
                  'photo');
     foreach ($vocab as $type) {
         if (isset($properties[$type])) {
@@ -255,7 +258,7 @@ function create($request, $photos = []) {
     # their own content.
     # replies, reposts, likes, bookmarks, etc, should reference source URLs
     # and may interact with those sources here.
-    if (! in_array($properties['posttype'], ['article', 'note', 'photo'])) {
+    if (! in_array($properties['posttype'], ['article', 'note', 'photo', 'ate', 'drank'])) {
         list($properties, $content) = posttype_source_function($properties['posttype'], $properties, $content);
     }
 
