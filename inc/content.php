@@ -307,7 +307,9 @@ function create($request, $photos = []) {
         $url .= $config['content_paths'][$properties['posttype']];
     }
     $filename = $path . $properties['slug'] . '.md';
-    $url .= $properties['slug'] . '/index.html';
+    /* this differs depending on whether ugly URLs are enabled */
+    //$url .= $properties['slug'] . '/index.html';
+    $url .= $properties['slug'] . '.html';
 
     # write_file will default to NOT overwriting existing files,
     # so we don't need to check that here.
