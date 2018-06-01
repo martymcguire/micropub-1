@@ -264,7 +264,16 @@ function create($request, $photos = []) {
 
     # all items need a date
     if (!isset($properties['date'])) {
-        $properties['date'] = isset($properties['created']) ? $properties['created'] : date('Y-m-d H:i:s');
+        $properties['date'] = date('Y-m-d H:i:s');
+        # micropub spec suggests 'published' for create time.
+        # however, Hugo uses this as a boolean. grab it before
+        # we overwrite it (if present).
+        foreach(['published','created'] as $key) {
+            if(isset($properties[$key])) {
+                $properties['date'] = $properties[$key];
+                break; # stop on the first create-date-y property
+            }
+        }
     }
 
     if (isset($properties['post-status'])) {
