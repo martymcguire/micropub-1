@@ -264,7 +264,7 @@ function create($request, $photos = []) {
 
     # all items need a date
     if (!isset($properties['date'])) {
-        $properties['date'] = date('Y-m-d H:i:s');
+        $properties['date'] = isset($properties['created']) ? $properties['created'] : date('Y-m-d H:i:s');
     }
 
     if (isset($properties['post-status'])) {
