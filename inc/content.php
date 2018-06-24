@@ -11,6 +11,9 @@ function get_source_from_url($url) {
     if ('index.html' == substr($path, -10)) {
         # if this was a full URL to "/index.html", replace that with ".md"
         $path = str_replace('/index.html', '.md', $path);
+    } elseif ( '.html' == substr($path, -5)) {
+        # if this is a URL ending in .html but not index.html, replace with ".md"
+        $path = str_replace('.html', '.md', $path);
     } elseif ( '/' == substr($path, -1)) {
         # if this is a URL ending in just "/", replace that with ".md"
         $path = rtrim($path, '/') . '.md';
