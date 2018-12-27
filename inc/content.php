@@ -123,9 +123,11 @@ function post_type_discovery($properties) {
                  'in-reply-to',
                  'repost-of',
                  'like-of',
+                 'listen-of',
+                 'watch-of',
                  'bookmark-of',
-		 'ate',
-		 'drank',
+                 'ate',
+                 'drank',
                  'photo');
     foreach ($vocab as $type) {
         if (isset($properties[$type])) {
@@ -291,11 +293,14 @@ function create($request, $photos = []) {
         $properties['published'] = true;
     }
 
+    # we may use the post date to generate paths, slugs
+    $ts = strtotime($properties['date']);
+
     # we need either a title, or a slug.
     # NOTE: MF2 defines "name" as the title value.
     if (!isset($properties['name']) && !isset($properties['slug'])) {
         # We will assign this a slug.
-        $properties['slug'] = date('His');
+        $properties['slug'] = date('His', $ts);
     }
 
     # if we have a title but not a slug, generate a slug
@@ -314,9 +319,12 @@ function create($request, $photos = []) {
     $path = $config['source_path'] . 'content/';
     $url = $config['base_url'];
     # does this type of content require a specific path?
+    # 2018-11-19 HAXX: expecting an array with [prefix, date string].
     if (array_key_exists($properties['posttype'], $config['content_paths'])) {
-        $path .= $config['content_paths'][$properties['posttype']];
-        $url .= $config['content_paths'][$properties['posttype']];
+	$path_extra_parts = $config['content_paths'][$properties['posttype']];
+	$path_extra = $path_extra_parts[0] . date($path_extra_parts[1], $ts);
+	$path .= $path_extra;
+	$url .= $path_extra;
     }
     $filename = $path . $properties['slug'] . '.md';
     /* this differs depending on whether ugly URLs are enabled */
