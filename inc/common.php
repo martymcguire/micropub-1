@@ -36,7 +36,7 @@ function show_info() {
 }
 
 function parse_request() {
-    if ( strtolower($_SERVER['CONTENT_TYPE']) == 'application/json' || strtolower($_SERVER['HTTP_CONTENT_TYPE']) == 'application/json' ) {
+    if ( strtolower($_SERVER['CONTENT_TYPE']) == 'application/json' || (array_key_exists('HTTP_CONTENT_TYPE', $_SERVER) && strtolower($_SERVER['HTTP_CONTENT_TYPE']) == 'application/json' )) {
         $request = \p3k\Micropub\Request::createFromJSONObject(json_decode(file_get_contents('php://input'), true));
     } else {
         $request = \p3k\Micropub\Request::createFromPostArray($_POST);
@@ -101,7 +101,7 @@ function indieAuth($endpoint, $token, $me = '') {
         quit(401, 'insufficient_scope', 'The request lacks valid authentication credentials');
     } elseif (is_array($response['scope']) && !in_array('create', $response['scope']) && !in_array('post', $response['scope'])) {
         quit(403, 'forbidden', 'Client does not have access to this resource');
-    } elseif (FALSE === stripos($response['scope'], 'create')) {
+    } elseif ((FALSE === stripos($response['scope'], 'create')) && (FALSE === stripos($response['scope'], 'post'))) {
         quit(403, 'Forbidden', 'Client does not have access to this resource');
     }
     // we got here, so all checks passed. return true.
