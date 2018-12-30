@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 show_config();
                 break;
             case 'source':
-               show_content_source($_GET['url'], $_GET['properties']);
+               show_content_source($_GET['url'], (isset($_GET['properties']) ? $_GET['properties'] : []));
                 break;
             case 'syndicate-to':
                 show_config('syndicate-to');
