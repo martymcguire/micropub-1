@@ -290,8 +290,9 @@ function create($request, $photos = []) {
 
     # figure out what kind of post this is.
     $mf2_type = $mf2['type'][0];
+    $properties['h'] = preg_replace("/^h-/", '', $mf2_type);
     if($mf2_type !== "h-entry") {
-        $posttype = preg_replace("/^h-/", '', $mf2_type);
+        $posttype = $properties['h'];
     } else {
         $posttype = post_type_discovery($properties);
     }
