@@ -98,7 +98,7 @@ function slugify($string) {
 # that i'm interested in singularizing.
 function normalize_properties($properties) {
     $props = [];
-    $array_props = ['audio','photo','video','category'];
+    $array_props = ['audio','category','photo','syndication','video'];
     foreach ($properties as $k => $v) {
         # we want certain properties to be an array, even if it's a
         # single element.  Our Hugo templates require this.
