@@ -73,18 +73,27 @@ if (!function_exists('getallheaders')) {
  *
  * @param array $token the authorization token to check
  * @param string $me the site to authorize
+ * @param string $endpoint_auth Authorization: Bearer ... header value that allows us to introspect.
  *
  * @return boolean true if authorised
  */
-function indieAuth($endpoint, $token, $me = '') {
+function indieAuth($endpoint, $token, $me = '', $endpoint_auth = false) {
     /**
      * Check token is valid
      */
     if ( $me == '' ) { $me = $_SERVER['HTTP_HOST']; }
     $ch = curl_init($endpoint);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, 
-        Array("Accept: application/json","Authorization: $token"));
+    curl_setopt($ch, CURLOPT_HTTPHEADER,
+	    Array(
+		    'Accept: application/json',
+		    "Authorization: Bearer $endpoint_auth",
+		    'Content-Type: application/x-www-form-urlencoded'
+	    ));
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(Array('token' => $token)));
+    // curl_setopt($ch, CURLOPT_VERBOSE, true);
+    // curl_setopt($ch, CURLOPT_STDERR, fopen('/home/marty/hugo.martymcgui.re/micropub/loggy/curl.txt', 'w+'));
     $token_response = strval(curl_exec($ch));
     curl_close($ch);
     if (empty($token_response)) {
