@@ -357,6 +357,11 @@ function create($request, $photos = []) {
         $properties['slug'] = slugify($properties['slug']);
     }
 
+    # HACK 2022-11-27 write mp-syndicate-to commands as properties
+    if (isset($request->commands['mp-syndicate-to'])) {
+        $properties['syndicate-to'] = $request->commands['mp-syndicate-to'];
+    }
+
     # build the entire source file, with front matter and content
     $file_contents = build_post($properties, $content);
 
