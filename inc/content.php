@@ -302,6 +302,18 @@ function create($request, $photos = []) {
         $properties = array_merge($config['content_defaults'][$posttype], $properties);
     }
 
+    # checkins include full objects in `tags` that we need to move aside
+    foreach( ($properties['tags'] ?? []) as $idx => $tag ) {
+        if (is_array($tag)) {
+            $properties['person_tags'] = $properties['person_tags'] ?? [];
+            $properties['person_tags'] []= $tag;
+            unset($properties['tags'][$idx]);
+        }
+    }
+    if ( ! empty($properties['tags']) ){
+        $properties['tags'] = array_values($properties['tags']);
+    }
+
     # normalize event start / end. use start as post date.
     if(($posttype == 'event') && (isset($properties['start']))) {
         # make sure start and end are properly formatted
@@ -342,10 +354,13 @@ function create($request, $photos = []) {
     # we may use the post date to generate paths, slugs
     $ts = strtotime($properties['date']);
 
+    # time-based slug which is used if no slug or title is present, and for permashortlink
+    $tsslug = date('His', $ts);
+
     # we need either a title, or a slug.
     if (!isset($properties['title']) && !isset($properties['slug'])) {
         # We will assign this a slug.
-        $properties['slug'] = date('His', $ts);
+        $properties['slug'] = $tsslug;
     }
 
     # if we have a title but not a slug, generate a slug
@@ -355,6 +370,11 @@ function create($request, $photos = []) {
     # make sure the slugs are safe.
     if (isset($properties['slug'])) {
         $properties['slug'] = slugify($properties['slug']);
+    }
+
+    # HACK 2023-06-03 if slug isn't the same as the date-based slug, set aliases for time-based permashortlink.
+    if ($properties['slug'] != $tsslug) {
+        $properties['aliases'] = [date('/Y/m/d/His/', $ts)];
     }
 
     # HACK 2022-11-27 write mp-syndicate-to commands as properties
