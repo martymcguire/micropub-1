@@ -18,7 +18,7 @@ $photo_urls = array();
 
 // Take headers and other incoming data
 $headers = getallheaders();
-if ($headers === false ) {
+if ( empty($headers) ) {
     quit(400, 'invalid_headers', 'The request lacks valid headers');
 }
 $headers = array_change_key_case($headers, CASE_LOWER);
@@ -30,7 +30,11 @@ if (! isset($headers['authorization']) ) {
     quit(401, 'no_auth', 'No authorization token supplied.');
 }
 // check the token for this connection.
-indieAuth($config['token_endpoint'], explode(' ', $headers['authorization'])[1], $config['base_url'], $config['token_endpoint_auth']);
+indieAuth(
+    $config['token_endpoint'],
+    explode(' ', $headers['authorization'])[1],
+    $config['base_url'], $config['token_endpoint_auth']
+);
 
 # is this a GET request?
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -97,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             undelete($request);
             break;
         case 'update':
-            update($request, $photo_urls);
+            update($request);
             break;
         default:
             create($request, $photo_urls);

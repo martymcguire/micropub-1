@@ -71,9 +71,9 @@ if (!function_exists('getallheaders')) {
  *
  * This section largely adopted from rhiaro
  *
- * @param array $token the authorization token to check
+ * @param string $token the authorization token to check
  * @param string $me the site to authorize
- * @param string $endpoint_auth Authorization: Bearer ... header value that allows us to introspect.
+ * @param string|false $endpoint_auth Authorization: Bearer ... header value that allows us to introspect.
  *
  * @return boolean true if authorised
  */

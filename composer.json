@@ -2,5 +2,8 @@
   "require": {
     "symfony/yaml": "4.0.*",
     "p3k/micropub": "*"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^1.11"
   }
 }
